@@ -8,6 +8,7 @@ const App = () => {
       <Navbar />
       <Hero />
       <div className="container">
+        <Title />
         <Programs />
       </div>
     </div>
