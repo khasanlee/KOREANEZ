@@ -9,7 +9,7 @@ import program_icon_3 from "../../assets/program-icon-3.png";
 
 const Programs = () => {
   const navigateToTestPage = () => {
-    <a href="/test.html"></a>
+    window.location.href ="/test.html";
   };
 
   return (
