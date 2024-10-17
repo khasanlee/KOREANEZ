@@ -17,7 +17,7 @@ const App = () => {
         <Title subTitle="Our PROGRAM" title="What We Offer" />
         <Programs />
         <About />
-        <Title subTitle="Gallery" title="Campus Photos" />
+        <Title subTitle="KOREANEZ" title="Practice Korean With Us" />
         <Campus />
         <Title subTitle="TESTIMONIALS" title="What Student Says" />
         <Testimonials />

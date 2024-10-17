@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Voice Recorder & Speech Recognition</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        color: #004080;
+      }
+      button {
+        background-color: #004080;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:disabled {
+        background-color: #a9a9a9;
+        cursor: not-allowed;
+      }
+      #status {
+        font-size: 18px;
+        margin-top: 20px;
+      }
+      #textToRead,
+      #recognizedText {
+        font-size: 20px;
+        margin: 20px 0;
+        padding: 10px;
+        border: 1px solid #004080;
+        border-radius: 5px;
+        background-color: #e6f2ff;
+        width: 80%;
+        text-align: center;
+      }
+      #recognizedText {
+        transition: background-color 0.5s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Voice Recorder & Speech Recognition</h1>
+    <button id="recordButton">Start Recording</button>
+    <button id="stopButton" disabled>Stop Recording</button>
+    <p id="textToRead">배가 고파요</p>
+    <p id="status"></p>
+    <p id="recognizedText"></p>
+
+    <script>
+      const recordButton = document.getElementById("recordButton");
+      const stopButton = document.getElementById("stopButton");
+      const statusText = document.getElementById("status");
+      const textToRead = document.getElementById("textToRead");
+      const recognizedText = document.getElementById("recognizedText");
+
+      let mediaRecorder;
+      let audioChunks = [];
+
+      async function startRecording() {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true })
+          .then(function (stream) {
+            mediaRecorder = new MediaRecorder(stream, {
+              mimeType: "audio/webm",
+            });
+            mediaRecorder.ondataavailable = function (event) {
+              audioChunks.push(event.data);
+            };
+            mediaRecorder.onstop = async function () {
+              const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+              await uploadAudio(audioBlob);
+              console.log("Audio recording stopped", {
+                recognizedText: recognizedText.textContent,
+                textToRead: textToRead.textContent,
+                isEquals: recognizedText.textContent === textToRead.textContent,
+              });
+              if (recognizedText.textContent === textToRead.textContent)
+                recognizedText.style.backgroundColor = "lightgreen";
+              else recognizedText.style.backgroundColor = "lightcoral";
+              audioChunks = [];
+            };
+            mediaRecorder.start();
+            statusText.textContent = "Recording...";
+            recordButton.disabled = true;
+            stopButton.disabled = false;
+          })
+          .catch(function (err) {
+            console.error("Error accessing the microphone:", err);
+          });
+      }
+
+      function stopRecording() {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+          mediaRecorder.stop();
+          statusText.textContent = "";
+          recordButton.disabled = false;
+          stopButton.disabled = true;
+        }
+      }
+
+      async function uploadAudio(audioBlob) {
+        const formData = new FormData();
+        formData.append("audio_file", audioBlob, "recorded_audio.webm");
+
+        try {
+          const recognitionResponse = await fetch(
+            "http://localhost:8000/recognize/",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+          const recognitionData = await recognitionResponse.json();
+          recognizedText.textContent = recognitionData.text;
+        } catch (error) {
+          console.error("Error recognizing speech:", error);
+        }
+      }
+
+      recordButton.addEventListener("click", startRecording);
+      stopButton.addEventListener("click", stopRecording);
+    </script>
+  </body>
+</html>

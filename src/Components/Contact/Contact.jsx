@@ -38,19 +38,18 @@ const Contact = () => {
           Send us a message <img src={msg_icon} alt="" />
         </h3>
         <p>
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Architecto
-          illum, voluptas dolor quia cupiditate ipsam quasi quaerat eligendi
-          fugit quisquam at sit sapiente quam obcaecati assumenda, labore alias
-          odit ad!
+          We need your feedback
         </p>
         <ul>
           <li>
             <img src={mail_icon} alt="" />
             husaniskandarov@gmail.com
+            xasaniskandarov@gmail.com
           </li>
           <li>
             <img src={phone_icon} alt="" />
-            +82 10-5803-6357
+            +82 10-5803-6357,
+            +82 10-5641-9932
           </li>
           <li>
             <img src={location_icon} alt="" />
