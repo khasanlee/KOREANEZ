@@ -1,137 +1,188 @@
-
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Recorder & Speech Recognition</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f8ff;
-        color: #333;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin: 0;
-        padding: 20px;
-      }
-      h1 {
-        color: #004080;
-      }
-      button {
-        background-color: #004080;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        margin: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-      }
-      button:disabled {
-        background-color: #a9a9a9;
-        cursor: not-allowed;
-      }
-      #status {
-        font-size: 18px;
-        margin-top: 20px;
-      }
-      #textToRead,
-      #recognizedText {
-        font-size: 20px;
-        margin: 20px 0;
-        padding: 10px;
-        border: 1px solid #004080;
-        border-radius: 5px;
-        background-color: #e6f2ff;
-        width: 80%;
-        text-align: center;
-      }
-      #recognizedText {
-        transition: background-color 0.5s ease;
-      }
+        /* Global styling */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Heading styling */
+        h1 {
+            color: #1a202c;
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        /* Button styling */
+        button {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            margin: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+        }
+        button:hover {
+            background-color: #357abd;
+            box-shadow: 0 6px 12px rgba(74, 144, 226, 0.4);
+        }
+        button:disabled {
+            background-color: #cfd8dc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Status text styling */
+        #status {
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        /* Text areas styling */
+        #textToRead,
+        #recognizedText {
+            font-size: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #4a90e2;
+            border-radius: 10px;
+            background-color: #eef4fa;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+            transition: background-color 0.5s ease;
+        }
+
+        /* Video styling */
+        #clip-container {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            border: 3px solid #4a90e2;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        #clip-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
     </style>
-  </head>
-  <body>
-    <h1>Voice Recorder & Speech Recognition</h1>
+</head>
+<body>
+
+    <video id="clip-container" width="600" height="340" controls>
+        <source src="http://localhost:3000/media/5" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <h1>Repeat the Text and Check Your Pronunciation</h1>
+    
     <button id="recordButton">Start Recording</button>
     <button id="stopButton" disabled>Stop Recording</button>
+    
     <p id="textToRead">배가 고파요</p>
     <p id="status"></p>
     <p id="recognizedText"></p>
 
     <script>
-      const recordButton = document.getElementById("recordButton");
-      const stopButton = document.getElementById("stopButton");
-      const statusText = document.getElementById("status");
-      const textToRead = document.getElementById("textToRead");
-      const recognizedText = document.getElementById("recognizedText");
+        const recordButton = document.getElementById("recordButton");
+        const stopButton = document.getElementById("stopButton");
+        const statusText = document.getElementById("status");
+        const textToRead = document.getElementById("textToRead");
+        const recognizedText = document.getElementById("recognizedText");
 
-      let mediaRecorder;
-      let audioChunks = [];
+        let mediaRecorder;
+        let audioChunks = [];
 
-      async function startRecording() {
-        navigator.mediaDevices
-          .getUserMedia({ audio: true })
-          .then(function (stream) {
-            mediaRecorder = new MediaRecorder(stream, {
-              mimeType: "audio/webm",
-            });
-            mediaRecorder.ondataavailable = function (event) {
-              audioChunks.push(event.data);
-            };
-            mediaRecorder.onstop = async function () {
-              const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-              await uploadAudio(audioBlob);
-              console.log("Audio recording stopped", {
-                recognizedText: recognizedText.textContent,
-                textToRead: textToRead.textContent,
-                isEquals: recognizedText.textContent === textToRead.textContent,
-              });
-              if (recognizedText.textContent === textToRead.textContent)
-                recognizedText.style.backgroundColor = "lightgreen";
-              else recognizedText.style.backgroundColor = "lightcoral";
-              audioChunks = [];
-            };
-            mediaRecorder.start();
-            statusText.textContent = "Recording...";
-            recordButton.disabled = true;
-            stopButton.disabled = false;
-          })
-          .catch(function (err) {
-            console.error("Error accessing the microphone:", err);
-          });
-      }
-
-      function stopRecording() {
-        if (mediaRecorder && mediaRecorder.state === "recording") {
-          mediaRecorder.stop();
-          statusText.textContent = "";
-          recordButton.disabled = false;
-          stopButton.disabled = true;
+        async function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+                    await uploadAudio(audioBlob);
+                    recognizedText.style.backgroundColor = recognizedText.textContent === textToRead.textContent ? "lightgreen" : "lightcoral";
+                    audioChunks = [];
+                };
+                mediaRecorder.start();
+                statusText.textContent = "Recording...";
+                recordButton.disabled = true;
+                stopButton.disabled = false;
+            })
+            .catch(err => console.error("Error accessing the microphone:", err));
         }
-      }
 
-      async function uploadAudio(audioBlob) {
-        const formData = new FormData();
-        formData.append("audio_file", audioBlob, "recorded_audio.webm");
-
-        try {
-          const recognitionResponse = await fetch(
-            "http://localhost:8000/recognize/",
-            {
-              method: "POST",
-              body: formData,
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                statusText.textContent = "";
+                recordButton.disabled = false;
+                stopButton.disabled = true;
             }
-          );
-          const recognitionData = await recognitionResponse.json();
-          recognizedText.textContent = recognitionData.text;
-        } catch (error) {
-          console.error("Error recognizing speech:", error);
         }
-      }
 
-      recordButton.addEventListener("click", startRecording);
-      stopButton.addEventListener("click", stopRecording);
+        async function uploadAudio(audioBlob) {
+            const formData = new FormData();
+            formData.append("audio_file", audioBlob, "recorded_audio.webm");
+            try {
+                const response = await fetch("http://localhost:8000/recognize/", { method: "POST", body: formData });
+                const data = await response.json();
+                recognizedText.textContent = data.text;
+            } catch (error) {
+                console.error("Error recognizing speech:", error);
+            }
+        }
+
+        function changeVideoSource(newSource) {
+            const video = document.getElementById('clip-container');
+            video.src = newSource;
+            video.load();
+            video.play();
+        }
+
+        async function fetchClips() {
+            try {
+                const response = await fetch('http://localhost:3000/clips');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const clips = await response.json();
+                const randomClip = clips[Math.floor(Math.random() * clips.length)];
+                changeVideoSource("http://localhost:3000/media/" + randomClip.clip_number);
+                textToRead.innerText = randomClip.subtitle;
+            } catch (error) {
+                console.error('Error fetching clips:', error);
+            }
+        }
+
+        fetchClips();
+
+        recordButton.addEventListener("click", startRecording);
+        stopButton.addEventListener("click", stopRecording);
     </script>
-  </body>
+</body>
 </html>
