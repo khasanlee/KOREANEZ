@@ -1,0 +1,140 @@
+/* Navbar Styling */
+nav {
+    width: 100%;
+    color: #a83535;
+    padding: 8px 4px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+    background-color: #212ea0;
+  }
+  .logo {
+    width: 250px;
+  }
+  
+  /* Responsive Navbar */
+  @media (max-width: 1000px) {
+    .logo {
+      width: 140px;
+    }
+    nav ul li {
+      margin: 10px 15px;
+    }
+  }
+  @media (max-width: 840px) {
+    nav {
+      padding: 15px 0;
+    }
+  }
+  
+  /* Main Page Styling */
+  body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    background-color: #fff;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  /* Heading styling */
+  h1 {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 20px 0;
+    text-align: center;
+  }
+  
+  /* Button styling */
+  button {
+    background-color: #e7ebee;
+    color: #333; /* Updated color for contrast */
+    border: none;
+    padding: 12px 24px;
+    margin: 10px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+  }
+  button:hover {
+    background-color: #fff;
+    box-shadow: 0 6px 12px rgba(74, 144, 226, 0.4);
+  }
+  button:disabled {
+    background-color: #cfd8dc;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  
+  /* Status text styling */
+  #status {
+    font-size: 18px;
+    margin-top: 20px;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  /* Text areas styling */
+  #textToRead,
+  #recognizedText,
+  #userSpeechText {
+    font-size: 20px;
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #4a90e2;
+    border-radius: 10px;
+    background-color: #eef4fa;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    transition: background-color 0.5s ease;
+  }
+  
+  /* Video styling */
+  #clip-container {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    border: 3px solid #4a90e2;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    max-width: 600px;
+    margin-top: 80px; /* Adjusted margin to account for fixed navbar */
+  }
+  #clip-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Hero Section Background */
+  #hero {
+    background-image: url("./src/assets/hero.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100vh; /* Adjust height as needed */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; /* Start invisible */
+    transition: opacity 1s ease-in-out;
+  }
+  
+  /* Fade-in effect when the page loads */
+  body.loaded #hero {
+    opacity: 1;
+  }
+  

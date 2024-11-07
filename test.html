@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Recorder & Speech Recognition</title>
     <style>
-        /* Global styling */
+        /* Reset and global styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             background-color: #f5f7fa;
@@ -13,9 +18,63 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
             margin: 0;
+            padding: 20px;
+        }
+
+        /* Navbar styling */
+        .navbar {
+            width: 100%;
+            background-color: #4a90e2;
+            padding: 15px 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+        .navbar .logo {
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .navbar .menu {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar .menu a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1em;
+            transition: color 0.3s ease;
+        }
+        .navbar .menu a:hover {
+            color: #d1d1d1;
+        }
+        .navbar .contact-button {
+            background-color: #fff;
+            color: #4a90e2;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .navbar .contact-button:hover {
+            background-color: #d1d1d1;
+            color: #4a90e2;
+        }
+
+        /* Page content styling */
+        .content {
+            margin-top: 100px; /* Space for fixed navbar */
+            text-align: center;
             padding: 20px;
         }
 
@@ -25,7 +84,6 @@
             font-size: 2rem;
             font-weight: 600;
             margin: 20px 0;
-            text-align: center;
         }
 
         /* Button styling */
@@ -63,7 +121,7 @@
         #textToRead,
         #recognizedText {
             font-size: 20px;
-            margin: 20px 0;
+            margin: 20px 70px;
             padding: 15px;
             border: 1px solid #4a90e2;
             border-radius: 10px;
@@ -93,19 +151,34 @@
 </head>
 <body>
 
-    <video id="clip-container" width="600" height="340" controls>
-        <source src="http://localhost:3000/media/5" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="#" class="logo">Voice Recognition</a>
+        <div class="menu">
+            <a href="#">Home</a>
+            <a href="#">Features</a>
+            <a href="#">Pricing</a>
+            <a href="#">About</a>
+        </div>
+        <a href="#" class="contact-button">Contact Us</a>
+    </nav>
 
-    <h1>Repeat the Text and Check Your Pronunciation</h1>
-    
-    <button id="recordButton">Start Recording</button>
-    <button id="stopButton" disabled>Stop Recording</button>
-    
-    <p id="textToRead">배가 고파요</p>
-    <p id="status"></p>
-    <p id="recognizedText"></p>
+    <!-- Content -->
+    <div class="content">
+        <video id="clip-container" width="600" height="340" controls>
+            <source src="http://localhost:3000/media/5" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <h1>Repeat the Text and Check Your Pronunciation</h1>
+        
+        <button id="recordButton">Start Recording</button>
+        <button id="stopButton" disabled>Stop Recording</button>
+        
+        <p id="textToRead">배가 고파요</p>
+        <p id="status"></p>
+        <p id="recognizedText"></p>
+    </div>
 
     <script>
         const recordButton = document.getElementById("recordButton");
